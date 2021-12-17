@@ -191,12 +191,15 @@ $(document).ready(function() {
                     $('.updateCanvas').append('<canvas id="myChart" width="400" height="400"></canvas>');
                 },
                 success: function(resp) {
-                    // console.log(resp);
-                    if(resp.code == 400){
-                        $('#from_date_err').html(resp.error_message.split('-')[4]);
+                    if(resp.status == 200){
+                        $('#_show_fastest_astroid_speed').html(' Speed : '+resp.data.get_fastest_astroid_speed.speed_km+' || Asteroid ID : '+resp.data.get_fastest_astroid_speed.astroid_id);
+                        $('#_show_closest_astroid_distance').html(' distance : '+resp.data.get_closest_astroid_distance.distance_km+' || Asteroid ID : '+resp.data.get_closest_astroid_distance.astroid_id);
+                        $('#_show_average_size_of_astroid').html(' Average Size of the Astroid is : '+resp.data.average_size_of_astroid_km);
+                        _generateChartForNeoStart(resp.data.result.near_earth_objects);
                     }else{
-                        _generateChartForNeoStart(resp.near_earth_objects);
+                        $('#from_date_err').html(resp.data.error_message);
                     }
+                    
                    
                 },
                 complete: function() {
@@ -219,32 +222,32 @@ $(document).ready(function() {
             mylabels.push(key.split('-').reverse().join('-'));
             chartData.push(val.length);
 
-            //speed
-            $.each(val, function(rvKey, rvVal){
-                fastest_asteroid_km.push(rvVal.close_approach_data[0].relative_velocity.kilometers_per_hour);
-            });
+            // //speed
+            // $.each(val, function(rvKey, rvVal){
+            //     fastest_asteroid_km.push(rvVal.close_approach_data[0].relative_velocity.kilometers_per_hour);
+            // });
             
-            //distance 
-            $.each(val, function(rvKey, rvVal){
-                coolest_astroid_distance.push(rvVal.close_approach_data[0].miss_distance.kilometers);
-            });
+            // //distance 
+            // $.each(val, function(rvKey, rvVal){
+            //     coolest_astroid_distance.push(rvVal.close_approach_data[0].miss_distance.kilometers);
+            // });
 
-            // Average size 
-            $.each(val, function(rvKey, rvVal){
-                total_size_of_astroid += rvVal.estimated_diameter.kilometers.estimated_diameter_max;
-                total_astroid_count++;
-            });
+            // // Average size 
+            // $.each(val, function(rvKey, rvVal){
+            //     total_size_of_astroid += rvVal.estimated_diameter.kilometers.estimated_diameter_max;
+            //     total_astroid_count++;
+            // });
 
         });
 
-        $('#_show_average_size_of_astroid').html(' Average Size of the Astroid is : '+total_size_of_astroid / total_astroid_count);
+        // $('#_show_average_size_of_astroid').html(' Average Size of the Astroid is : '+total_size_of_astroid / total_astroid_count);
 
-        let _fastest_asteroid_km = Math.max.apply(Math,fastest_asteroid_km);
-        calculate_fastest_astroid_speed(data, _fastest_asteroid_km);
+        // let _fastest_asteroid_km = Math.max.apply(Math,fastest_asteroid_km);
+        // calculate_fastest_astroid_speed(data, _fastest_asteroid_km);
 
-        let _closest_astroid_distance = Math.min.apply(Math,coolest_astroid_distance);
+        // let _closest_astroid_distance = Math.min.apply(Math,coolest_astroid_distance);
 
-        _calculate_closest_astroid_distance(data, _closest_astroid_distance);
+        // _calculate_closest_astroid_distance(data, _closest_astroid_distance);
 
         const ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
